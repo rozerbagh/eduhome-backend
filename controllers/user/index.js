@@ -104,6 +104,13 @@ router.post(
     const accessToken = user.generateAuthToken(user._id);
     const refreshToken = user.generateRefershToken(user._id);
     return makeResponse(res, SUCCESS, true, LOGIN, {
+      fullName: user.fullName,
+      email: user.email,
+      phoneno: user.phoneno,
+      user_role: user.user_role,
+      status: user.status,
+      image: user.image,
+      address: user.address,
       accessToken,
       refreshToken,
     });
