@@ -1,20 +1,23 @@
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import config from "config";
-import { compare } from 'bcrypt';
+import { compare } from "bcrypt";
 
 const { Schema, model } = mongoose;
 
-const addressSchema = mongoose.Schema({
-  street: String,
-  houseno: String,
-  landmark: String,
-  town: String,
-  pincode: Number,
-  district: String,
-  state: String,
-  country: String,
-}, { _id: false });
+const addressSchema = mongoose.Schema(
+  {
+    street: String,
+    houseno: String,
+    landmark: String,
+    town: String,
+    pincode: Number,
+    district: String,
+    state: String,
+    country: String,
+  },
+  { _id: false }
+);
 
 const userSchema = new Schema(
   {
@@ -40,7 +43,7 @@ const userSchema = new Schema(
     },
     user_role: {
       type: String,
-      enum : ['TEACHER','STUDENT'],
+      enum: ["TEACHER", "STUDENT", "ADMIN"],
     },
     status: {
       type: Number,
@@ -57,27 +60,28 @@ const userSchema = new Schema(
     },
     isDeleted: {
       type: Boolean,
-      default: false
-  }
+      default: false,
+    },
   },
   { timestamps: true }
 );
 
-
 userSchema.methods.generateAuthToken = function (_id, role) {
-  return jwt.sign({ id: _id, role }, config.get("privateKey"), { expiresIn: '15d' });
+  return jwt.sign({ id: _id, role }, config.get("privateKey"), {
+    expiresIn: "15d",
+  });
 };
 
 userSchema.methods.generateRefershToken = function (_id, role) {
-  return jwt.sign({ id: _id, role }, config.get("privateKey"), { expiresIn: '30d' });
+  return jwt.sign({ id: _id, role }, config.get("privateKey"), {
+    expiresIn: "30d",
+  });
 };
 
 userSchema.methods.comparePassword = function (raw, encrypted) {
   return new Promise((resolve, reject) => {
-    compare(raw, encrypted)
-      .then(resolve)
-      .catch(reject);
+    compare(raw, encrypted).then(resolve).catch(reject);
   });
 };
 
-export const User = model('User', userSchema);
+export const User = model("User", userSchema);
