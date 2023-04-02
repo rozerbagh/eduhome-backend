@@ -106,6 +106,7 @@ router.post('/forgot-password', validators('FORGET_PASSWORD'), (req, res) => {
     findUserDetail({ email })
         .then(admin => {
             if (!admin) throw new Error(EMAIL_NOT_REGISTER);
+            console.log("getting user details",admin);
             return Promise.all(
                 [
                     sendEmail({

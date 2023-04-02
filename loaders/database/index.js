@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { privateKey } from '../../config/privateKeys.js'
 
-mongoose.connect(privateKey.DB_STRING_DEV,
+mongoose.connect(privateKey.DB_STRING,
     {
         useNewUrlParser: true,
         useUnifiedTopology: true
