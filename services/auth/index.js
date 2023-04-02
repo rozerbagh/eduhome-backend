@@ -14,11 +14,11 @@ export const addUser = async (payload = {}, role) => {
 };
 
 //Update user
-export const updateUser = (_id, data) => new Promise((resolve, reject) => {
-    User.findOneAndUpdate({ _id: _id }, { $set: data }, { new: true })
-        .then(resolve)
-        .catch(reject);
-});
+export const updateUser = (email, data) => new Promise((resolve, reject) => {
+    User.findOneAndUpdate({ email: email }, data)
+      .then(resolve)
+      .catch(reject);
+  });
 // Update Password
 export const updatePassword = (id, password) => new Promise((resolve, reject) => {
     User.findById(id)

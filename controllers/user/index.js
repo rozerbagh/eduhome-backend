@@ -47,8 +47,7 @@ const router = Router();
 //Add user
 router.post(
   "/sign-up",
-  //   validators("ADD_USER"),
-  upload.fields([{ name: "image", maxCount: 1 }]),
+  upload.fields([{ name: "image", maxCount: 1 }]), validators("ADD_USER"),
   catchAsyncAction(async (req, res) => {
     const userRecord = await findUserDetail({ email: req.body.email });
     if (userRecord)

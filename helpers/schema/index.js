@@ -10,6 +10,7 @@ export const validationSchema = (action) => {
         password: Joi.string().required(),
         email: Joi.string().required(),
         phoneno: Joi.string().required(),
+        role: Joi.string().optional(),
       };
     }
     case "LOGIN": {
