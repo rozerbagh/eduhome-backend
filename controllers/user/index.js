@@ -22,6 +22,16 @@ import {
 } from "../../services/index.js";
 import { privateKey } from "../../config/privateKeys.js";
 
+import twilio from "twilio";
+
+const YOUR_AUTH_TOKEN = privateKey.TWILIO_AUTH_TOKEN;
+const YOUR_ACCOUNT_SID = privateKey.TWILIO_ACCOUNT_SID;
+
+const client = twilio(YOUR_ACCOUNT_SID, YOUR_AUTH_TOKEN);
+
+//const client = Twilio(YOUR_ACCOUNT_SID, YOUR_AUTH_TOKEN);
+
+
 //Response Status code
 const { SUCCESS, NOT_FOUND, RECORD_ALREADY_EXISTS, BAD_REQUEST } = statusCodes;
 
@@ -40,6 +50,8 @@ const {
   RESET_PASSWORD,
   INVALID_PASSWORD,
   PASSWORD_CHANGED,
+  VERIFIED_OTP,
+  SEND_OTP
 } = responseMessages;
 
 const router = Router();
@@ -250,5 +262,26 @@ router.delete(
     return makeResponse(res, SUCCESS, true, DELETE_USER, []);
   })
 );
+
+//Send OTP
+router.post('/send-otp', catchAsyncAction(async (req, res) => {
+  const { countryCode, phoneNumber  } = req.body;
+  const otpResponse = await client.verify.services(privateKey.TWIILIO_SID).verifications.create({
+    to: `+${countryCode}${phoneNumber}`,
+    channel: "sms"
+  })
+  return makeResponse(res, SUCCESS, true, SEND_OTP,otpResponse);
+}));
+
+//Verify OTP
+router.post('/mobile-otp-verification', catchAsyncAction(async (req, res) => {
+  const { countryCode, phoneNumber, otp  } = req.body;
+  const otpResponse = await client.verify.services(privateKey.TWIILIO_SID).verificationChecks.create({
+    to: `+${countryCode}${phoneNumber}`,
+    code: otp
+  })
+  return makeResponse(res, SUCCESS, true, VERIFIED_OTP,otpResponse);
+}));
+
 
 export const userController = router;

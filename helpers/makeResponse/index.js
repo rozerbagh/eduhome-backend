@@ -47,7 +47,9 @@ export const responseMessages = {
     'FETCH_COURSE': 'Fetch Course Successfully',
     'FETCH_ALL_COURSES': 'Fetch All Courses Successfully',
     'DELETE_COURSE': 'Course Deleted Successfully',
-    'UPDATE_COURSE': 'Course Updated Successfully'
+    'UPDATE_COURSE': 'Course Updated Successfully',
+    'SEND_OTP': 'OTP Send Successfully',
+    'VERIFIED_OTP': 'OTP Verified Successfully'
 
 }
 
