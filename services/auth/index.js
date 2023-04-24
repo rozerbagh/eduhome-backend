@@ -60,6 +60,7 @@ export const setDeviceToken = (_id) => new Promise((resolve, reject) => {
 
 //Update user
 export const updateUserData = (userprops = {}, condition = {}) => new Promise((resolve, reject) => {
+    console.log("inside service update", userprops, condition);
 	User.findOneAndUpdate(condition, { $set: userprops }, { new: true })
 		.then(resolve)
 		.catch(reject);

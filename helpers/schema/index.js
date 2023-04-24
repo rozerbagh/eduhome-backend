@@ -5,12 +5,8 @@ export const validationSchema = (action) => {
   switch (action) {
     case "ADD_USER": {
       return {
-        name: Joi.string().required(),
-        fullName: Joi.string().required(),
         password: Joi.string().required(),
-        email: Joi.string().required(),
-        phoneno: Joi.string().required(),
-        role: Joi.string().optional(),
+        email: Joi.string().required()
       };
     }
     case "LOGIN": {

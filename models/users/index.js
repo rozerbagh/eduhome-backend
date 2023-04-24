@@ -5,45 +5,31 @@ import { compare } from "bcrypt";
 
 const { Schema, model } = mongoose;
 
-const addressSchema = mongoose.Schema(
-  {
-    street: String,
-    houseno: String,
-    landmark: String,
-    town: String,
-    pincode: Number,
-    district: String,
-    state: String,
-    country: String,
-  },
-  { _id: false }
-);
-
 const userSchema = new Schema(
   {
-    name: {
-      type: String,
-    },
     fullName: {
       type: String,
-      required: true,
+      required: false,
     },
     email: {
       type: String,
       unique: true,
-      required: true,
+      required: false,
     },
     password: {
       type: String,
-      required: true,
+      required: false,
     },
     phoneno: {
       type: String,
-      required: true,
+      required: false,
     },
     user_role: {
       type: String,
       enum: ["TEACHER", "STUDENT", "ADMIN"],
+    },
+    gendor: {
+      type: String
     },
     status: {
       type: Number,
@@ -53,10 +39,29 @@ const userSchema = new Schema(
       type: String,
       default: "",
     },
-    address: [addressSchema],
+    city: {
+      type: String,
+      required: false,
+    },
+    pin_code: {
+      type: Number
+    },
     otp: {
       type: String,
       default: "000000",
+    },
+    isProfileComplete: {
+      type: Boolean,
+      default: false,
+    },
+    education: [],
+    qualifications: [],
+    subjects: [],
+    hourly_rate: {
+      type: Number
+    },
+    other_information: {
+      type: String
     },
     isDeleted: {
       type: Boolean,

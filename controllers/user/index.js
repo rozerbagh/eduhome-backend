@@ -58,39 +58,13 @@ const router = Router();
 
 //Add user
 router.post(
-  "/sign-up",
-  upload.fields([{ name: "image", maxCount: 1 }]), validators("ADD_USER"),
+  "/sign-up", validators("ADD_USER"),
   catchAsyncAction(async (req, res) => {
     const userRecord = await findUserDetail({ email: req.body.email });
     if (userRecord)
       return makeResponse(res, RECORD_ALREADY_EXISTS, false, ALREADY_EXIST);
-    if (req?.files?.image?.length > 0) req.body.image = req.files.image[0].path;
-    if (req.body?.address) {
-      let address = [
-        {
-          street: req.body.street,
-          houseno: req.body.houseno,
-          landmark: req.body.landmark,
-          town: req.body.town,
-          pincode: req.body.pincode,
-          district: req.body.district,
-          state: req.body.state,
-          country: req.body.country,
-        },
-      ];
-      req.body.address = address;
-    }
     const password = await hashPassword(req.body.password);
-    const reqObje = {
-      name: req.body.name,
-      fullName: req.body.fullName,
-      email: req.body.email,
-      password: password,
-      phoneno: req.body.phoneno,
-      user_role: req.body.role,
-      image: req.files?.image[0]?.path,
-    };
-    const newUser = await addUser(reqObje);
+    const newUser = await addUser({ email: req.body.email, password });
     const accessToken = newUser.generateAuthToken(newUser._id);
     const refreshToken = newUser.generateRefershToken(newUser._id);
     //Mapping for removing temprary fields
@@ -226,27 +200,11 @@ router.post(
 //Update user details
 router.patch(
   "/update-user",
-  upload.fields([{ name: "image", maxCount: 1 }]),
   userAuth,
   catchAsyncAction(async (req, res) => {
     const { email, _id } = req.userData;
-    if (req?.files?.profile_pic?.length > 0)
-      req.body.profile_pic = req.files.profile_pic[0].path;
-    if (req.body?.address) {
-      let address = [
-        {
-          street: req.body.street,
-          houseno: req.body.houseno,
-          landmark: req.body.landmark,
-          town: req.body.town,
-          pincode: req.body.pincode,
-          district: req.body.district,
-          state: req.body.state,
-          country: req.body.country,
-        },
-      ];
-      req.body.address = address;
-    }
+    console.log(">>>>>>>>>>>>>>>>>>>",_id);
+    console.log("/////////////////",req.body);
     let updateUserProfile = await updateUserData(req.body, { _id: _id });
     // Mapping for removing temprary fields
     const newUserMapper = await userMapper(updateUserProfile);
@@ -265,22 +223,22 @@ router.delete(
 
 //Send OTP
 router.post('/send-otp', catchAsyncAction(async (req, res) => {
-  const { countryCode, phoneNumber  } = req.body;
+  const { countryCode, phoneNumber } = req.body;
   const otpResponse = await client.verify.services(privateKey.TWIILIO_SID).verifications.create({
     to: `+${countryCode}${phoneNumber}`,
     channel: "sms"
   })
-  return makeResponse(res, SUCCESS, true, SEND_OTP,otpResponse);
+  return makeResponse(res, SUCCESS, true, SEND_OTP, otpResponse);
 }));
 
 //Verify OTP
 router.post('/mobile-otp-verification', catchAsyncAction(async (req, res) => {
-  const { countryCode, phoneNumber, otp  } = req.body;
+  const { countryCode, phoneNumber, otp } = req.body;
   const otpResponse = await client.verify.services(privateKey.TWIILIO_SID).verificationChecks.create({
     to: `+${countryCode}${phoneNumber}`,
     code: otp
   })
-  return makeResponse(res, SUCCESS, true, VERIFIED_OTP,otpResponse);
+  return makeResponse(res, SUCCESS, true, VERIFIED_OTP, otpResponse);
 }));
 
 
