@@ -57,6 +57,7 @@ const userSchema = new Schema(
     education: [],
     qualifications: [],
     subjects: [],
+    experiences: [],
     hourly_rate: {
       type: Number
     },
