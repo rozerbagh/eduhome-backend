@@ -31,7 +31,6 @@ const client = twilio(YOUR_ACCOUNT_SID, YOUR_AUTH_TOKEN);
 
 //const client = Twilio(YOUR_ACCOUNT_SID, YOUR_AUTH_TOKEN);
 
-
 //Response Status code
 const { SUCCESS, NOT_FOUND, RECORD_ALREADY_EXISTS, BAD_REQUEST } = statusCodes;
 
@@ -51,14 +50,15 @@ const {
   INVALID_PASSWORD,
   PASSWORD_CHANGED,
   VERIFIED_OTP,
-  SEND_OTP
+  SEND_OTP,
 } = responseMessages;
 
 const router = Router();
 
 //Add user
 router.post(
-  "/sign-up", validators("ADD_USER"),
+  "/sign-up",
+  validators("ADD_USER"),
   catchAsyncAction(async (req, res) => {
     const userRecord = await findUserDetail({ email: req.body.email });
     if (userRecord)
@@ -203,8 +203,8 @@ router.patch(
   userAuth,
   catchAsyncAction(async (req, res) => {
     const { email, _id } = req.userData;
-    console.log(">>>>>>>>>>>>>>>>>>>",_id);
-    console.log("/////////////////",req.body);
+    console.log(">>>>>>>>>>>>>>>>>>>", _id);
+    console.log("/////////////////", req.body);
     let updateUserProfile = await updateUserData(req.body, { _id: _id });
     // Mapping for removing temprary fields
     const newUserMapper = await userMapper(updateUserProfile);
@@ -222,24 +222,33 @@ router.delete(
 );
 
 //Send OTP
-router.post('/send-otp', catchAsyncAction(async (req, res) => {
-  const { countryCode, phoneNumber } = req.body;
-  const otpResponse = await client.verify.services(privateKey.TWIILIO_SID).verifications.create({
-    to: `+${countryCode}${phoneNumber}`,
-    channel: "sms"
+router.post(
+  "/send-otp",
+  catchAsyncAction(async (req, res) => {
+    const { countryCode, phoneNumber } = req.body;
+    const otpResponse = await client.verify
+      .services(privateKey.TWIILIO_SID)
+      .verifications.create({
+        to: `+${countryCode}${phoneNumber}`,
+        channel: "sms",
+      });
+    return makeResponse(res, SUCCESS, true, SEND_OTP, otpResponse);
   })
-  return makeResponse(res, SUCCESS, true, SEND_OTP, otpResponse);
-}));
+);
 
 //Verify OTP
-router.post('/mobile-otp-verification', catchAsyncAction(async (req, res) => {
-  const { countryCode, phoneNumber, otp } = req.body;
-  const otpResponse = await client.verify.services(privateKey.TWIILIO_SID).verificationChecks.create({
-    to: `+${countryCode}${phoneNumber}`,
-    code: otp
+router.post(
+  "/mobile-otp-verification",
+  catchAsyncAction(async (req, res) => {
+    const { countryCode, phoneNumber, otp } = req.body;
+    const otpResponse = await client.verify
+      .services(privateKey.TWIILIO_SID)
+      .verificationChecks.create({
+        to: `+${countryCode}${phoneNumber}`,
+        code: otp,
+      });
+    return makeResponse(res, SUCCESS, true, VERIFIED_OTP, otpResponse);
   })
-  return makeResponse(res, SUCCESS, true, VERIFIED_OTP, otpResponse);
-}));
-
+);
 
 export const userController = router;

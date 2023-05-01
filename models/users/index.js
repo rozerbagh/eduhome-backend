@@ -4,7 +4,6 @@ import config from "config";
 import { compare } from "bcrypt";
 
 const { Schema, model } = mongoose;
-
 const userSchema = new Schema(
   {
     fullName: {
@@ -28,8 +27,8 @@ const userSchema = new Schema(
       type: String,
       enum: ["TEACHER", "STUDENT", "ADMIN"],
     },
-    gendor: {
-      type: String
+    gender: {
+      type: String,
     },
     status: {
       type: Number,
@@ -38,13 +37,6 @@ const userSchema = new Schema(
     image: {
       type: String,
       default: "",
-    },
-    city: {
-      type: String,
-      required: false,
-    },
-    pin_code: {
-      type: Number
     },
     otp: {
       type: String,
@@ -59,19 +51,30 @@ const userSchema = new Schema(
     subjects: [],
     experiences: [],
     hourly_rate: {
-      type: Number
+      type: Number,
     },
     other_information: {
-      type: String
+      type: String,
     },
     isDeleted: {
       type: Boolean,
       default: false,
     },
+    coins: {
+      type: Number,
+    },
+    address: [],
   },
   { timestamps: true }
 );
-
+userSchema.method.addAddress = function (_address) {
+  return this.address.push({ id: Schema.Types.ObjectId, ..._address });
+};
+userSchema.method.removeAddress = function (_address) {
+  const index = this.address.findIndex((e) => e.id === _address.id);
+  const array = this.address.splice(index, 1);
+  return (this.address = array);
+};
 userSchema.methods.generateAuthToken = function (_id, role) {
   return jwt.sign({ id: _id, role }, config.get("privateKey"), {
     expiresIn: "15d",
