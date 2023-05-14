@@ -64,7 +64,11 @@ router.post(
     if (userRecord)
       return makeResponse(res, RECORD_ALREADY_EXISTS, false, ALREADY_EXIST);
     const password = await hashPassword(req.body.password);
-    const newUser = await addUser({ email: req.body.email, password });
+    const newUser = await addUser({
+      email: req.body.email,
+      password,
+      ...req.body,
+    });
     const accessToken = newUser.generateAuthToken(newUser._id);
     const refreshToken = newUser.generateRefershToken(newUser._id);
     //Mapping for removing temprary fields
