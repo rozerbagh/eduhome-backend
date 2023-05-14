@@ -58,7 +58,7 @@ const router = Router();
 //Add user
 router.post(
   "/sign-up",
-  validators("ADD_USER"),
+  // validators("ADD_USER"),
   catchAsyncAction(async (req, res) => {
     const userRecord = await findUserDetail({ email: req.body.email });
     if (userRecord)

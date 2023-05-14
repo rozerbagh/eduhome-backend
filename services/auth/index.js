@@ -12,7 +12,7 @@ export const findAllUsers = async (condition = {}) =>
 export const addUser = async (payload = {}, role) => {
   payload.user_role = role;
   let user = new User({ ...payload });
-  user.addAddress(payload.address);
+  // User.addAddress(payload.address);
   return user.save();
 };
 
