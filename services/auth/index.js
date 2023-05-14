@@ -1,55 +1,65 @@
-import { User } from '../../models/index.js';
+import { User } from "../../models/index.js";
 
 //Find user detail
-export const findUserDetail = async (condition = {}) => await User.findOne(condition).exec();
+export const findUserDetail = async (condition = {}) =>
+  await User.findOne(condition).exec();
 
 //Find user list
-export const findAllUsers = async (condition = {}) => await User.find(condition).exec();
+export const findAllUsers = async (condition = {}) =>
+  await User.find(condition).exec();
 
 //Add user
 export const addUser = async (payload = {}, role) => {
-    payload.role = role;
-    let user = new User(payload);
-    return user.save();
+  payload.user_role = role;
+  let user = new User({ ...payload });
+  user.addAddress(payload.address);
+  return user.save();
 };
 
 //Update user
-export const updateUser = (email, data) => new Promise((resolve, reject) => {
-    User.findOneAndUpdate({ email: email }, data)
+export const updateUser = (email, data) =>
+  new Promise((resolve, reject) => {
+    User.findOneAndUpdate({ email: email }, data).then(resolve).catch(reject);
+  });
+// Update Password
+export const updatePassword = (id, password) =>
+  new Promise((resolve, reject) => {
+    User.findById(id)
+      .then((doc) => {
+        doc.password = password;
+        doc.save();
+        resolve();
+      })
+      .catch(reject);
+  });
+
+//Delete user
+export const deleteUser = (id) =>
+  new Promise((resolve, reject) => {
+    User.updateMany({ _id: { $in: id } }, { $set: { isDeleted: true } })
       .then(resolve)
       .catch(reject);
   });
-// Update Password
-export const updatePassword = (id, password) => new Promise((resolve, reject) => {
-    User.findById(id)
-        .then((doc) => {
-            doc.password = password;
-            doc.save();
-            resolve();
-        })
-        .catch(reject);
-});
-
-//Delete user
-export const deleteUser = (id) => new Promise((resolve, reject) => {
-    User.updateMany({ _id: { $in: id } }, { $set: { isDeleted: true } })
-        .then(resolve)
-        .catch(reject)
-});
 
 //Update device token
-export const updateDeviceToken = (_id, data) => new Promise((resolve, reject) => {
+export const updateDeviceToken = (_id, data) =>
+  new Promise((resolve, reject) => {
     User.findOneAndUpdate({ _id: _id }, { $set: data }, { new: true })
-        .then(resolve)
-        .catch(reject);
-});
+      .then(resolve)
+      .catch(reject);
+  });
 
 //set device token null
-export const setDeviceToken = (_id) => new Promise((resolve, reject) => {
-    User.findOneAndUpdate({ _id: _id }, { $set: { device_token: undefined } }, { new: true })
-        .then(resolve)
-        .catch(reject);
-});
+export const setDeviceToken = (_id) =>
+  new Promise((resolve, reject) => {
+    User.findOneAndUpdate(
+      { _id: _id },
+      { $set: { device_token: undefined } },
+      { new: true }
+    )
+      .then(resolve)
+      .catch(reject);
+  });
 
 // async function getcontacts(){
 //     let existingcontacts = []
@@ -59,18 +69,19 @@ export const setDeviceToken = (_id) => new Promise((resolve, reject) => {
 //  }
 
 //Update user
-export const updateUserData = (userprops = {}, condition = {}) => new Promise((resolve, reject) => {
+export const updateUserData = (userprops = {}, condition = {}) =>
+  new Promise((resolve, reject) => {
     console.log("inside service update", userprops, condition);
-	User.findOneAndUpdate(condition, { $set: userprops }, { new: true })
-		.then(resolve)
-		.catch(reject);
-});
+    User.findOneAndUpdate(condition, { $set: userprops }, { new: true })
+      .then(resolve)
+      .catch(reject);
+  });
 
 async function getcontacts() {
+  const data = await User.find({}).select(
+    "mobileNumber name profile_pic status _id"
+  );
 
-    const data = await User.find({}).select('mobileNumber name profile_pic status _id');
-
-    return data;
-
+  return data;
 }
-export { getcontacts }
+export { getcontacts };
