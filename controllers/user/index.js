@@ -203,8 +203,6 @@ router.patch(
   userAuth,
   catchAsyncAction(async (req, res) => {
     const { email, _id } = req.userData;
-    console.log(">>>>>>>>>>>>>>>>>>>",_id);
-    console.log("/////////////////",req.body);
     let updateUserProfile = await updateUserData(req.body, { _id: _id });
     // Mapping for removing temprary fields
     const newUserMapper = await userMapper(updateUserProfile);
