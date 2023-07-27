@@ -98,6 +98,7 @@ router.post(
     const accessToken = user.generateAuthToken(user._id);
     const refreshToken = user.generateRefershToken(user._id);
     return makeResponse(res, SUCCESS, true, LOGIN, {
+      ...user._doc,
       fullName: user.fullName,
       email: user.email,
       phoneno: user.phoneno,
