@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
-import config from "../../config/default.json";
+import config from "config";
 import { compare } from "bcrypt";
 
 const { Schema, model } = mongoose;
@@ -82,13 +82,13 @@ userSchema.method.removeAddress = function (_address) {
   return (this.address = array);
 };
 userSchema.methods.generateAuthToken = function (_id, role) {
-  return jwt.sign({ id: _id, role }, config.get("privateKey"), {
+  return jwt.sign({ id: _id, role }, "myprivatekey", {
     expiresIn: "15d",
   });
 };
 
 userSchema.methods.generateRefershToken = function (_id, role) {
-  return jwt.sign({ id: _id, role }, config.get("privateKey"), {
+  return jwt.sign({ id: _id, role }, "myprivatekey", {
     expiresIn: "30d",
   });
 };
