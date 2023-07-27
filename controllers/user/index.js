@@ -24,6 +24,7 @@ import {
 import { privateKey } from "../../config/privateKeys.js";
 
 import twilio from "twilio";
+import fetch from "node-fetch";
 let { FAST2SMS_APIKEY } = process.env;
 
 const YOUR_AUTH_TOKEN = privateKey.TWILIO_AUTH_TOKEN;
@@ -243,12 +244,11 @@ router.delete(
 //   })
 // );
 
-router.post(
-  "/send-otp",
-  catchAsyncAction(async (req, res) => {
-    const { phoneNumber } = req.body;
+router.post("/send-otp", catchAsyncAction(async (req, res) => {
+  const { phoneNumber } = req.body;
     const OTP = generateOtp();
     const url = `https://www.fast2sms.com/dev/bulkV2?authorization=${FAST2SMS_APIKEY}&route=otp&variables_values=${OTP}&flash=1&numbers=${phoneNumber}`;
+<<<<<<< HEAD
     const otpData = await axios.get(url);
     // let updateUserProfile = await updateUserData(
     //   { otp: `${OTP}` },
@@ -256,6 +256,16 @@ router.post(
     // );
     // await userMapper(updateUserProfile);
     return makeResponse(res, SUCCESS, true, SEND_OTP, otpData.data);
+=======
+    const otpResponse = await fetch(url);
+    console.log("getting otp response:", OTP);
+    const newUser = await addUser({
+      phoneno: req.body.phoneNumber,
+      otp: OTP
+    });
+    const otpData = otpResponse.json();
+    return makeResponse(res, SUCCESS, true, SEND_OTP, otpData);
+>>>>>>> refs/remotes/origin/master
   })
 );
 
@@ -269,6 +279,35 @@ router.post(
     if (userRecord.otp === otp)
       return makeResponse(res, SUCCESS, true, VERIFY_OTP);
     return makeResponse(res, BAD_REQUEST, false, OTP_MISMATCH);
+    // const { phoneNumber, OTP } = req.body;
+    // const userRecord = await findUserDetail({ phoneno: phoneNumber, otp: OTP });
+    // if (userRecord){
+    //   const accessToken = userRecord.generateAuthToken(userRecord._id);
+    //   const refreshToken = userRecord.generateRefershToken(userRecord._id)
+    //   return makeResponse(res, SUCCESS, true, VERIFIED_OTP, '',{
+    //     accessToken,
+    //     refreshToken,
+    //   });
+    // }else {
+    //   return makeResponse(res, BAD_REQUEST, false, 'OTP Miss Match');
+    // }
+    
+  })
+);
+
+//Get User Detail
+router.get( "/profile",userAuth,
+  catchAsyncAction(async (req, res) => {
+    const { email, phoneno  } = req.userData;
+      const userRecord = await findUserDetail({
+        $or: [{ phoneno: phoneno }, { email: email }],
+      });
+      if (userRecord){
+        const newUserMapper = await userMapper(userRecord);
+        return makeResponse(res, SUCCESS, true, FETCH_USERS, newUserMapper);
+      }else {
+        return makeResponse(res, BAD_REQUEST, false, 'User Not Found');
+      }      
   })
 );
 

@@ -61,8 +61,13 @@ const userSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    description: {
+      type: String,
+      required: false,
+    },
     coins: {
       type: Number,
+      default: '3000',
     },
     address: [],
   },
