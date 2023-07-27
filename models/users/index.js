@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
-import config from "config";
+import config from "../../config/default.json";
 import { compare } from "bcrypt";
 
 const { Schema, model } = mongoose;
@@ -67,7 +67,7 @@ const userSchema = new Schema(
     },
     coins: {
       type: Number,
-      default: '3000',
+      default: "3000",
     },
     address: [],
   },
