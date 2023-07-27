@@ -1,4 +1,5 @@
 import Router from "express";
+import axios from "axios";
 import {
   catchAsyncAction,
   makeResponse,
@@ -45,6 +46,7 @@ const {
   UPDATE_USER,
   OTP_FOR_PASSWORD,
   EMAIL_NOT_REGISTER,
+  PHONENO_NOT_REGISTER,
   OTP_MISMATCH,
   VERIFY_OTP,
   RESET_PASSWORD,
@@ -66,9 +68,9 @@ router.post(
       return makeResponse(res, RECORD_ALREADY_EXISTS, false, ALREADY_EXIST);
     const password = await hashPassword(req.body.password);
     const newUser = await addUser({
+      ...req.body,
       email: req.body.email,
       password,
-      ...req.body,
     });
     const accessToken = newUser.generateAuthToken(newUser._id);
     const refreshToken = newUser.generateRefershToken(newUser._id);
@@ -86,8 +88,9 @@ router.post(
   "/login",
   //   validators("LOGIN"),
   catchAsyncAction(async (req, res) => {
-    const { email, password } = req.body;
-    const user = await findUserDetail({ email });
+    const { password, phoneno } = req.body;
+    const user = await findUserDetail({ phoneno });
+    console.log(user);
     if (!user) return makeResponse(res, NOT_FOUND, false, USER_NOTFOUND);
     const passwordCorrect = await matchPassword(password, user.password);
     if (!passwordCorrect) return makeResponse(res, BAD_REQUEST, false, INVALID);
@@ -246,9 +249,13 @@ router.post(
     const { phoneNumber } = req.body;
     const OTP = generateOtp();
     const url = `https://www.fast2sms.com/dev/bulkV2?authorization=${FAST2SMS_APIKEY}&route=otp&variables_values=${OTP}&flash=1&numbers=${phoneNumber}`;
-    const otpResponse = await fetch(url);
-    const otpData = otpResponse.json();
-    return makeResponse(res, SUCCESS, true, SEND_OTP, otpData);
+    const otpData = await axios.get(url);
+    // let updateUserProfile = await updateUserData(
+    //   { otp: `${OTP}` },
+    //   { phoneno: phoneNumber }
+    // );
+    // await userMapper(updateUserProfile);
+    return makeResponse(res, SUCCESS, true, SEND_OTP, otpData.data);
   })
 );
 
@@ -256,15 +263,29 @@ router.post(
 router.post(
   "/mobile-otp-verification",
   catchAsyncAction(async (req, res) => {
-    const { countryCode, phoneNumber, otp } = req.body;
-    const otpResponse = await client.verify
-      .services(privateKey.TWIILIO_SID)
-      .verificationChecks.create({
-        to: `+${countryCode}${phoneNumber}`,
-        code: otp,
-      });
-    return makeResponse(res, SUCCESS, true, VERIFIED_OTP, otpResponse);
+    const { phoneNumber, otp } = req.body;
+    let userRecord = await findUserDetail({ phoneno: phoneNumber });
+    if (!userRecord) throw new Error(PHONENO_NOT_REGISTER);
+    if (userRecord.otp === otp)
+      return makeResponse(res, SUCCESS, true, VERIFY_OTP);
+    return makeResponse(res, BAD_REQUEST, false, OTP_MISMATCH);
   })
 );
 
+router.get("/get-fast2sms-balance", async (req, res) => {
+  try {
+    const walletData = await axios.get(
+      `https://www.fast2sms.com/dev/wallet?authorization=${FAST2SMS_APIKEY}`
+    );
+    res.status(200).send({
+      data: walletData.data,
+      message: "Remaining Wallet balance",
+    });
+  } catch (error) {
+    res.status(404).send({
+      data: error,
+      message: "Unable to fetch Wallet balance",
+    });
+  }
+});
 export const userController = router;
