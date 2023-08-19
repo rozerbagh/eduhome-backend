@@ -324,7 +324,7 @@ router.get("/get-fast2sms-balance", async (req, res) => {
 
 //Get All Users
 router.get("/listing-by-role", catchAsyncAction(async (req, res) => {
-    let users = await findAllUsers({user_role: req.body.user_role});
+    let users = await findAllUsers({user_role: req.query.user_role});
     return makeResponse(res, SUCCESS, true, FETCH_USERS, users);
   })
 );

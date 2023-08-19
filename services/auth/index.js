@@ -9,8 +9,7 @@ export const findAllUsers = async (condition = {}) =>
   await User.find(condition).exec();
 
 //Add user
-export const addUser = async (payload = {}, role) => {
-  payload.user_role = role;
+export const addUser = async (payload = {}) => {
   let user = new User({ ...payload });
   // User.addAddress(payload.address);
   return user.save();
