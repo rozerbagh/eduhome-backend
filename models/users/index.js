@@ -10,6 +10,14 @@ const userSchema = new Schema(
       type: String,
       required: false,
     },
+    firstName: {
+      type: String,
+      required: false,
+    },
+    LastName: {
+      type: String,
+      required: false,
+    },
     email: {
       type: String,
       unique: true,
@@ -21,7 +29,7 @@ const userSchema = new Schema(
     },
     phoneno: {
       type: String,
-      required: true,
+      required: false,
       unique: true,
     },
     user_role: {
@@ -29,6 +37,9 @@ const userSchema = new Schema(
       enum: ["TEACHER", "STUDENT", "ADMIN"],
     },
     gender: {
+      type: String,
+    },
+    board: {
       type: String,
     },
     status: {
