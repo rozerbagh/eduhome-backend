@@ -55,6 +55,7 @@ const {
   PASSWORD_CHANGED,
   VERIFIED_OTP,
   SEND_OTP,
+  INVALID,
   USER_NOTFOUND
 } = responseMessages;
 
