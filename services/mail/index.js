@@ -1,15 +1,15 @@
-import { MailtrapClient } from "mailtrap";
+// import { MailtrapClient } from "mailtrap";
 import nodemailer from "nodemailer";
 import { privateKey } from "../../config/privateKeys.js";
 const { createTransport } = nodemailer;
 // import fs from "node:fs";
 // import path from "node:path";
 
-const TOKEN = "62f9c69f19411d137c3db98003888b68";
-const SENDER_EMAIL = "tutionsearch1@gmail.com";
+// const TOKEN = "62f9c69f19411d137c3db98003888b68";
+// const SENDER_EMAIL = "tutionsearch1@gmail.com";
 
-const client = new MailtrapClient({ token: TOKEN });
-const sender = { name: "Tutition Search", email: SENDER_EMAIL };
+// const client = new MailtrapClient({ token: TOKEN });
+// const sender = { name: "Tutition Search", email: SENDER_EMAIL };
 
 // export const sendEmail = async (email, otp) => {
 //   try {
