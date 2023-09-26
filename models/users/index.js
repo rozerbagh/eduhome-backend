@@ -78,7 +78,7 @@ const userSchema = new Schema(
     },
     coins: {
       type: Number,
-      default: "3000",
+      default: 300,
     },
     address: [],
   },

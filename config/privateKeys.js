@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 dotenv.config();
-
+const rozerbagh456appawd = "hckq ynlz ghdv ufth";
 let {
   DB_STRING,
   DB_STRING_DEV,

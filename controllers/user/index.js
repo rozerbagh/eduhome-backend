@@ -56,7 +56,7 @@ const {
   VERIFIED_OTP,
   SEND_OTP,
   INVALID,
-  USER_NOTFOUND
+  USER_NOTFOUND,
 } = responseMessages;
 
 const router = Router();
@@ -158,14 +158,16 @@ router.post(
     findUserDetail({ email })
       .then((admin) => {
         if (!admin) throw new Error(EMAIL_NOT_REGISTER);
-        console.log("getting user details", admin);
         return Promise.all([
-          sendEmail({
-            from: privateKey.EMAIL,
-            to: req.body.email,
-            subject: "OTP for password reset",
-            text: `The OTP for resetting your password is ${otp}`,
-          }),
+          sendEmail(
+            {
+              from: privateKey.EMAIL,
+              to: req.body.email,
+              subject: "OTP for password reset",
+              text: `The OTP for resetting your password is <br><h1>${otp}</h1>`,
+            },
+            otp
+          ),
           updateUser(req.body.email, { otp }),
         ]);
       })
@@ -325,8 +327,10 @@ router.get("/get-fast2sms-balance", async (req, res) => {
 });
 
 //Get All Users
-router.get("/listing-by-role", catchAsyncAction(async (req, res) => {
-    let users = await findAllUsers({user_role: req.query.user_role});
+router.get(
+  "/listing-by-role",
+  catchAsyncAction(async (req, res) => {
+    let users = await findAllUsers({ user_role: req.query.user_role });
     return makeResponse(res, SUCCESS, true, FETCH_USERS, users);
   })
 );
