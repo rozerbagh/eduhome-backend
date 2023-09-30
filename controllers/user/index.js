@@ -164,7 +164,7 @@ router.post(
               from: privateKey.EMAIL,
               to: req.body.email,
               subject: "OTP for password reset",
-              text: `The OTP for resetting your password is <br><h1>${otp}</h1>`,
+              text: `The OTP for resetting your password is ${otp}`,
             },
             otp
           ),

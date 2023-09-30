@@ -78,28 +78,20 @@ export const sendEmail = async (toMail) =>
     const transport = createTransport({
       service: "gmail",
       auth: {
-        user: "tuitionsearch1@gmail.com",
-        pass: "hyderabad247",
+        user: "rozerbagh@gmail.com",
+        pass: "unbwktwpilhvanyo",
       },
     });
 
-    transport.sendMail(
-      {
-        from: "tuitionsearch1@gmail.com",
-        to: "rozerbagh@gmail.com",
-        subject: "OTP for password reset",
-        text: `The OTP for resetting your password is <br><h1>123456</h1>`,
-      },
-      (error, response) => {
-        if (error) {
-          reject(error);
-          console.log(error);
-        } else {
-          resolve(response.messageId);
-          console.log(error);
-        }
-        transport.close();
+    transport.sendMail(toMail, (error, response) => {
+      if (error) {
+        reject(error);
+        console.log(error);
+      } else {
+        resolve(response.messageId);
+        console.log(response);
       }
-    );
+      transport.close();
+    });
   });
 sendEmail({});
