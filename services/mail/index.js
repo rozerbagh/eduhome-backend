@@ -94,4 +94,3 @@ export const sendEmail = async (toMail) =>
       transport.close();
     });
   });
-sendEmail({});
