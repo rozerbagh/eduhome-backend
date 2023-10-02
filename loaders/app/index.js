@@ -4,7 +4,7 @@ import { privateKey } from "../../config/privateKeys.js";
 import morgan from "morgan";
 import { Server } from "socket.io";
 import cors from "cors";
-import { Socket } from "../../services/index.js";
+// import { Socket } from "../../services/index.js";
 
 const PORT = Number(privateKey.PORT) || 4010;
 
@@ -25,7 +25,7 @@ const appLoader = async (app, router) =>
         origin: "*",
       },
     });
-    Socket(io);
+    // Socket(io);
     resolve();
   });
 
