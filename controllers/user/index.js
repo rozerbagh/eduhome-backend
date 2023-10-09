@@ -67,18 +67,22 @@ router.post(
   // validators("ADD_USER"),
   catchAsyncAction(async (req, res) => {
     const userRecord = await findUserDetail({ email: req.body.email });
+
     if (userRecord)
       return makeResponse(res, RECORD_ALREADY_EXISTS, false, ALREADY_EXIST);
+
     const password = await hashPassword(req.body.password);
     const newUser = await addUser({
       ...req.body,
       email: req.body.email,
       password,
     });
+    console.log(newUser);
     const accessToken = newUser.generateAuthToken(newUser._id);
     const refreshToken = newUser.generateRefershToken(newUser._id);
     //Mapping for removing temprary fields
     const newUserMapper = await userMapper(newUser);
+    console.log(newUserMapper);
     return makeResponse(res, SUCCESS, true, REGISTERD, newUserMapper, {
       accessToken,
       refreshToken,
@@ -123,6 +127,18 @@ router.get(
   })
 );
 
+router.post(
+  "/deduct-coins",
+  userAuth,
+  catchAsyncAction(async (req, res) => {
+    let userRecord = await findUserDetail({ _id: req.query.id });
+    if (!userRecord) throw new Error(USER_NOTFOUND);
+    if (userRecord.otp === req.body.otp)
+      return makeResponse(res, SUCCESS, true, VERIFY_OTP);
+    return makeResponse(res, BAD_REQUEST, false, OTP_MISMATCH);
+  })
+);
+
 //Change Password
 router.patch(
   "/change-password",
@@ -133,8 +149,9 @@ router.patch(
     matchPassword(req.body.oldPassword, password)
       .then(async (result) => {
         if (result) {
+          const password = await hashPassword(req.body.newPassword);
           return updateUser(email, {
-            password: await hashPassword(req.body.newPassword),
+            password: password,
           });
         }
         throw new Error(INVALID_PASSWORD);
@@ -184,7 +201,6 @@ router.post(
 //Verify OTP
 router.post(
   "/verify-otp",
-  // validators("VERIFY_OTP"),
   catchAsyncAction(async (req, res) => {
     let userRecord = await findUserDetail({ email: req.body.email });
     if (!userRecord) throw new Error(EMAIL_NOT_REGISTER);
@@ -200,8 +216,9 @@ router.post(
   // validators("RESET_PASSWORD"),
   async (req, res) => {
     const { email, password } = req.body;
+    const pasword = await hashPassword(password);
     updateUser(email, {
-      password: await hashPassword(password),
+      password: pasword,
     })
       .then(() => {
         return makeResponse(res, SUCCESS, true, RESET_PASSWORD);

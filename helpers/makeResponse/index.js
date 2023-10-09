@@ -57,6 +57,10 @@ export const responseMessages = {
   UPDATE_SUBJECT: "Subjects Updated Successfully",
   DELETE_BOARD: "Board Deleted Successfully",
   DELETE_SUBJECT: "Subject Deleted Successfully",
+
+  MESSAGE_SENT: "Message has been sent",
+  MESSAGE_NOT_SENT: "Unable to send the message",
+  ALL_MESSAGES: "All your messages",
 };
 
 export const notificationPayload = {};

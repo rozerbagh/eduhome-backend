@@ -87,6 +87,10 @@ const userSchema = new Schema(
 userSchema.method.addAddress = function (_address) {
   return this.address.push({ id: Schema.Types.ObjectId, ..._address });
 };
+userSchema.method.deductcoins = function (coin) {
+  return this.coins - coin;
+};
+
 userSchema.method.removeAddress = function (_address) {
   const index = this.address.findIndex((e) => e.id === _address.id);
   const array = this.address.splice(index, 1);
@@ -110,4 +114,4 @@ userSchema.methods.comparePassword = function (raw, encrypted) {
   });
 };
 
-export const User = model("User", userSchema);
+export const User = model("users", userSchema);

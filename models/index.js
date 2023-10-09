@@ -5,3 +5,4 @@ export * from "./category/index.js";
 export * from "./courses/index.js";
 export * from "./boards/index.js";
 export * from "./subjects/index.js";
+export * from "./messages/index.js";
