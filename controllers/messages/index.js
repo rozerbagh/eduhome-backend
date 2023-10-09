@@ -36,5 +36,16 @@ router.get(
     return makeResponse(res, SUCCESS, true, ALL_MESSAGES, messages);
   })
 );
+//Get Courses ById
+router.get(
+  "/:senderid/:recieverid",
+  catchAsyncAction(async (req, res) => {
+    let messages = await findMessagesBySenderId({
+      senderid: req.params.senderid,
+      recieverid: req.params.recieverid,
+    });
+    return makeResponse(res, SUCCESS, true, ALL_MESSAGES, messages);
+  })
+);
 
 export const messageController = router;
