@@ -16,6 +16,13 @@ const appLoader = async (app, router) =>
     app.use(morgan("dev"));
     app.use(cors());
     app.use("/api/v1/", router);
+    app.use("/", (req, res) => {
+      res.json({
+        name: "Tuition Search Backend SERVICES",
+        version: "1.0",
+        data: { ...req.params },
+      });
+    });
     server.listen(PORT, () => {
       console.log(`App is running on port: ${PORT}`);
     });
