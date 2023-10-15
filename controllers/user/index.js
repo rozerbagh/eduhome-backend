@@ -314,9 +314,14 @@ router.get(
   userAuth,
   catchAsyncAction(async (req, res) => {
     const { email, phoneno } = req.userData;
-    const userRecord = await findUserDetail({
+    let userRecord = await findUserDetail({
       $or: [{ phoneno: phoneno }, { email: email }],
     });
+    if (req.params.getById === true || req.params.getById === "true") {
+      userRecord = await findUserDetail({
+        $or: [{ _id: req.params.id }],
+      });
+    }
     if (userRecord) {
       const newUserMapper = await userMapper(userRecord);
       return makeResponse(res, SUCCESS, true, FETCH_USERS, newUserMapper);
