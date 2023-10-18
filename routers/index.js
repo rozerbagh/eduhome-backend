@@ -5,11 +5,13 @@ import {
   categoryController,
   courseController,
   subCategoryController,
+  messageController,
 } from "../controllers/index.js";
 
 const router = Router();
 
 router.use("/users", userController);
+router.use("/message", messageController);
 router.use("/admin", adminController);
 router.use("/category", categoryController);
 router.use("/subCategory", subCategoryController);

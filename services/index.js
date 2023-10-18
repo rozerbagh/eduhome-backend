@@ -7,3 +7,4 @@ export * from "./categories/index.js";
 export * from "./sub-category/index.js";
 export * from "./courses/index.js";
 export * from "./boards/index.js";
+export * from "./messages/index.js";

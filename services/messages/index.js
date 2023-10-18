@@ -7,8 +7,19 @@ export const addMessages = async (payload = {}) => {
 };
 
 //Find Messages Id
-export const findMessagesBySenderId = async (condition = {}) =>
-  await Messages.find(condition).exec();
+export const findMessagesBySenderId = async (condition = {}) => {
+  return await Messages.find(condition)
+    .populate({
+      path: "senderid",
+      select: "_id fullName email phoneno firstName LastName",
+    })
+    .populate({
+      path: "recieverid",
+      select: "_id fullName email phoneno firstName LastName",
+    })
+    .sort("-createdAt")
+    .exec();
+};
 
 //Find all Requests
 export const findAllMessages = (search, skip, limit) =>
