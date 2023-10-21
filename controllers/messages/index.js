@@ -87,7 +87,7 @@ router.patch(
     req.body.data.forEach((ele) => valuesToMatch.push(ele));
 
     // Define the filter to match documents with the values in the array
-    const filter = { someField: { $in: valuesToMatch } };
+    const filter = { messageid: { $in: valuesToMatch } };
 
     // Define the update you want to apply
     const update = { $set: { [req.bod.updatedField]: [req.body.updateValue] } };

@@ -11,13 +11,13 @@ const notificationSchema = mongoose.Schema(
       ref: "users",
       required: true,
     },
-    timestamp: {
-      type: Number,
-      default: Date.now(),
-    },
     isSeen: {
       type: Boolean,
       default: false,
+    },
+    timestamp: {
+      type: Number,
+      default: Date.now(),
     },
   },
   {
