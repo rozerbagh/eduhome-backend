@@ -3,10 +3,10 @@ import { createServer } from "http";
 import { privateKey } from "../../config/privateKeys.js";
 import morgan from "morgan";
 import cors from "cors";
+import os from "os";
 // import { Socket } from "../../services/index.js";
 
 const PORT = Number(privateKey.PORT) || 4010;
-const os = require("os");
 const appLoader = async (app, router) =>
   new Promise((resolve) => {
     const server = createServer(app);
@@ -16,7 +16,7 @@ const appLoader = async (app, router) =>
     app.use(morgan("dev"));
     app.use(cors());
     app.use("/api/v1/", router);
-    app.get("/getip", (req, res) => {
+    app.use("/getip", (req, res) => {
       const networkInterfaces = os.networkInterfaces();
       const arr = networkInterfaces["Local Area Connection 3"];
       const ip = arr[1].address;
