@@ -6,7 +6,13 @@ import {
   statusCodes,
 } from "../../helpers/index.js";
 import { userAuth } from "../../middleware/index.js";
-import { addMessages, findMessagesBySenderId } from "../../services/index.js";
+import {
+  addMessages,
+  findMessagesBySenderId,
+  updateNotificationByMsgId,
+  addNotifications,
+  getUserNotifications,
+} from "../../services/index.js";
 
 //Response Status code
 const { SUCCESS } = statusCodes;
@@ -16,7 +22,7 @@ const { MESSAGE_SENT, MESSAGE_NOT_SENT, ALL_MESSAGES } = responseMessages;
 
 const router = Router();
 
-//Courses Added
+//Messages Added
 router.post(
   "/send",
   userAuth,
@@ -27,7 +33,7 @@ router.post(
   })
 );
 
-//Get Courses ById
+//Get Messages ById
 router.get(
   "/:senderid",
   catchAsyncAction(async (req, res) => {
@@ -40,7 +46,7 @@ router.get(
     return makeResponse(res, SUCCESS, true, ALL_MESSAGES, messages);
   })
 );
-//Get Courses ById
+//Get Messages ById
 router.get(
   "/:senderid/:recieverid",
   catchAsyncAction(async (req, res) => {
@@ -52,6 +58,40 @@ router.get(
         { recieverid: req.params.recieverid },
       ],
     });
+    return makeResponse(res, SUCCESS, true, ALL_MESSAGES, messages);
+  })
+);
+
+// Notifications
+router.post(
+  "/send/:recieverid",
+  catchAsyncAction(async (req, res) => {
+    let notification = await addNotifications(req.body);
+    return makeResponse(res, SUCCESS, true, ALL_MESSAGES, notification);
+  })
+);
+router.get(
+  "/get/:userid",
+  catchAsyncAction(async (req, res) => {
+    let messages = await getUserNotifications({
+      userid: req.params.userid,
+    });
+    return makeResponse(res, SUCCESS, true, ALL_MESSAGES, messages);
+  })
+);
+router.patch(
+  "/update",
+  catchAsyncAction(async (req, res) => {
+    // Define an array of values you want to match
+    const valuesToMatch = [];
+    req.body.data.forEach((ele) => valuesToMatch.push(ele));
+
+    // Define the filter to match documents with the values in the array
+    const filter = { someField: { $in: valuesToMatch } };
+
+    // Define the update you want to apply
+    const update = { $set: { [req.bod.updatedField]: [req.body.updateValue] } };
+    let messages = await updateNotificationByMsgId(filter, update);
     return makeResponse(res, SUCCESS, true, ALL_MESSAGES, messages);
   })
 );

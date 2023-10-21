@@ -1,4 +1,4 @@
-import { Messages } from "../../models/index.js";
+import { Messages, Notifications } from "../../models/index.js";
 
 //Adds Messages
 export const addMessages = async (payload = {}) => {
@@ -17,7 +17,7 @@ export const findMessagesBySenderId = async (condition = {}) => {
       path: "recieverid",
       select: "_id fullName email phoneno firstName LastName",
     })
-    .sort("-createdAt")
+    .sort()
     .exec();
 };
 
@@ -32,6 +32,26 @@ export const findAllMessages = (search, skip, limit) =>
       .catch(reject);
   });
 
+// Notifications
+export const addNotifications = async (payload = {}) => {
+  let notification = new Notifications(payload);
+  return notification.save();
+};
+
+export const getUserNotifications = async (condition = {}) => {
+  return await Notifications.find(condition)
+    .populate({
+      path: "messageid",
+    })
+    .populate({
+      path: "userid",
+      select: "_id fullName email phoneno firstName LastName",
+    });
+};
+
+export const updateNotificationByMsgId = async (filter, update) => {
+  return await Notifications.updateMany(filter, update);
+};
 // //Delete Messages
 // export const deleteMessage = (id) =>
 //   new Promise((resolve, reject) => {

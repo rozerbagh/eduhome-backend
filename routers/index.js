@@ -12,6 +12,7 @@ const router = Router();
 
 router.use("/users", userController);
 router.use("/message", messageController);
+router.use("/notification", messageController);
 router.use("/admin", adminController);
 router.use("/category", categoryController);
 router.use("/subCategory", subCategoryController);
