@@ -6,7 +6,7 @@ import cors from "cors";
 // import { Socket } from "../../services/index.js";
 
 const PORT = Number(privateKey.PORT) || 4010;
-
+const os = require("os");
 const appLoader = async (app, router) =>
   new Promise((resolve) => {
     const server = createServer(app);
@@ -16,6 +16,12 @@ const appLoader = async (app, router) =>
     app.use(morgan("dev"));
     app.use(cors());
     app.use("/api/v1/", router);
+    app.get("/getip", (req, res) => {
+      const networkInterfaces = os.networkInterfaces();
+      const arr = networkInterfaces["Local Area Connection 3"];
+      const ip = arr[1].address;
+      res.send({ ipdata: networkInterfaces, ip: ip });
+    });
     app.use("/", (req, res) => {
       res.json({
         name: "Tuition Search Backend SERVICES",
