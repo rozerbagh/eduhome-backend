@@ -18,9 +18,7 @@ const appLoader = async (app, router) =>
     app.use("/api/v1/", router);
     app.use("/getip", (req, res) => {
       const networkInterfaces = os.networkInterfaces();
-      const arr = networkInterfaces["Local Area Connection 3"];
-      const ip = arr[1].address;
-      res.send({ ipdata: networkInterfaces, ip: ip });
+      res.send({ ipdata: networkInterfaces });
     });
     app.use("/", (req, res) => {
       res.json({
