@@ -28,9 +28,16 @@ router.post(
   "/send",
   userAuth,
   catchAsyncAction(async (req, res) => {
-    console.log(req.body);
     let message = await addMessages(req.body);
-    return makeResponse(res, SUCCESS, true, MESSAGE_SENT, message);
+    let notification = await addNotifications({
+      messageid: message._id,
+      userid: message.recieverid,
+      isSeen: false,
+    });
+    return makeResponse(res, SUCCESS, true, MESSAGE_SENT, {
+      message,
+      notification,
+    });
   })
 );
 
@@ -114,10 +121,17 @@ router.patch(
     req.body.data.forEach((ele) => valuesToMatch.push(ele));
 
     // Define the filter to match documents with the values in the array
-    const filter = { messageid: { $in: valuesToMatch } };
+    const filter = { _id: { $in: valuesToMatch } };
 
     // Define the update you want to apply
-    const update = { $set: { [req.bod.updatedField]: [req.body.updateValue] } };
+    const update =
+      req.body.updatedField === "isSeen"
+        ? {
+            $set: { isSeen: true },
+          }
+        : {
+            $set: { [req.body.updatedField]: [req.body.updateValue] },
+          };
     let messages = await updateNotificationByMsgId(filter, update);
     return makeResponse(res, SUCCESS, true, ALL_MESSAGES, messages);
   })
