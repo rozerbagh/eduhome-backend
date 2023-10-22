@@ -8,6 +8,7 @@ import {
 import { userAuth } from "../../middleware/index.js";
 import {
   addMessages,
+  findMessagesById,
   findMessagesBySenderId,
   updateNotificationByMsgId,
   addNotifications,
@@ -33,6 +34,14 @@ router.post(
   })
 );
 
+router.get(
+  "/getmessagebyid/:messageid",
+  catchAsyncAction(async (req, res) => {
+    let message = await findMessagesById({ _id: req.params.messageid });
+    return makeResponse(res, SUCCESS, true, ALL_MESSAGES, message);
+  })
+);
+
 //Get Messages ById
 router.get(
   "/:senderid",
@@ -46,6 +55,7 @@ router.get(
     return makeResponse(res, SUCCESS, true, ALL_MESSAGES, messages);
   })
 );
+
 //Get Messages ById
 router.get(
   "/:senderid/:recieverid",
@@ -64,18 +74,35 @@ router.get(
 
 // Notifications
 router.post(
-  "/send/:recieverid",
+  "/send-notification",
   catchAsyncAction(async (req, res) => {
     let notification = await addNotifications(req.body);
     return makeResponse(res, SUCCESS, true, ALL_MESSAGES, notification);
   })
 );
 router.get(
-  "/get/:userid",
+  "/get/usernotification/:userid",
   catchAsyncAction(async (req, res) => {
+    const isSeen = req.query.isSeen;
     let messages = await getUserNotifications({
       userid: req.params.userid,
+      isSeen: false,
     });
+    if (
+      isSeen === "true" ||
+      isSeen === "false" ||
+      isSeen === true ||
+      isSeen === false
+    ) {
+      messages = await getUserNotifications({
+        userid: req.params.userid,
+        isSeen: isSeen,
+      });
+    } else {
+      messages = await getUserNotifications({
+        userid: req.params.userid,
+      });
+    }
     return makeResponse(res, SUCCESS, true, ALL_MESSAGES, messages);
   })
 );

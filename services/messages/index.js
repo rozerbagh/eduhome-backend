@@ -5,6 +5,19 @@ export const addMessages = async (payload = {}) => {
   let message = new Messages(payload);
   return message.save();
 };
+export const findMessagesById = async (condition = {}) => {
+  return await Messages.find(condition)
+    .populate({
+      path: "senderid",
+      select: "_id fullName email phoneno firstName LastName",
+    })
+    .populate({
+      path: "recieverid",
+      select: "_id fullName email phoneno firstName LastName",
+    })
+    .sort()
+    .exec();
+};
 
 //Find Messages Id
 export const findMessagesBySenderId = async (condition = {}) => {
